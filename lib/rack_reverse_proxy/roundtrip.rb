@@ -178,7 +178,7 @@ module RackReverseProxy
 
     def add_response_headers_from_options
       (options[:response_headers] || []).each do |header, value|
-        response_headers[header] = value.to_s
+        response_headers[header.to_s] = value.to_s
       end
     end
 
