@@ -176,6 +176,12 @@ module RackReverseProxy
       response_headers["Location"] = response_location.to_s
     end
 
+    def add_response_headers_from_options
+      (options[:response_headers] || []).each do |header, value|
+        response_headers[header] = value.to_s
+      end
+    end
+
     def response_location
       @_response_location ||= URI(response_headers["Location"])
     end
@@ -197,6 +203,7 @@ module RackReverseProxy
 
     def setup_response_headers
       replace_location_header
+      add_response_headers_from_options
     end
 
     def rack_response

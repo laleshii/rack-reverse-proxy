@@ -227,6 +227,28 @@ RSpec.describe Rack::ReverseProxy do
       end
     end
 
+    context "response_headers option" do
+      subject do
+        stub_request(:any, "http://example.com/test")
+        get "/test", {}, "HTTP_ACCEPT_ENCODING" => "gzip, deflate"
+      end
+
+      describe "with response_headers set" do
+        def app
+          Rack::ReverseProxy.new(dummy_app) do
+            reverse_proxy "/test", "http://example.com/", response_headers: {"Content-Security-Policy" => "baz"}
+          end
+        end
+
+        it "adds extra headers to the response headers" do
+          subject
+          expect(
+            last_response.headers["Content-Security-Policy"]
+          ).to eq("baz")
+        end
+      end
+    end
+
     context "stripped_headers option" do
       subject do
         stub_request(:any, "http://example.com/test")
